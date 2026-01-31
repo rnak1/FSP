@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowStream Private</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #2c2c2c;
+            background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
+            min-height: 100vh;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 4rem;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(44, 44, 44, 0.15);
+            padding: 0.6rem 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #2c2c2c;
+            width: 240px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-field::placeholder {
+            color: #7a7a7a;
+            font-weight: 300;
+        }
+
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: #4a9eff;
+        }
+
+        .continue-btn {
+            background: #4a9eff;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .continue-btn:hover {
+            background: #3a8eef;
+            transform: translateX(2px);
+        }
+
+        .continue-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            stroke-width: 2.5;
+        }
+
+        .error-message {
+            color: #d64545;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+            background: #f5f5f5;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
+            padding: 2rem 3rem;
+            border-bottom: 1px solid rgba(44, 44, 44, 0.1);
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #2c2c2c;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #2c2c2c;
+            padding: 0.5rem 1.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #2c2c2c;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .logout-btn:hover {
+            background: #2c2c2c;
+            color: white;
+        }
+
+        .content {
+            padding: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 2rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #2c2c2c;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #4a9eff;
+        }
+
+        .post {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .post:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+        }
+
+        .post-title {
+            font-weight: 600;
+            color: #2c2c2c;
+            font-size: 1rem;
+        }
+
+        .post-author {
+            font-size: 0.8rem;
+            color: #7a7a7a;
+        }
+
+        .post-content {
+            color: #4a4a4a;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.8rem;
+            color: #7a7a7a;
+        }
+
+        .comment-count {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .comment-count:hover {
+            color: #4a9eff;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e8f4ff;
+            color: #4a9eff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="logo">FlowStream Private</div>
+        <form class="login-form" id="loginForm">
+            <input type="text" class="input-field" id="username" placeholder="Username" autocomplete="off">
+            <input type="password" class="input-field" id="password" placeholder="Password" autocomplete="off">
+            <button type="submit" class="continue-btn">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </form>
+        <div class="error-message" id="errorMessage">Invalid credentials. Please try again.</div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="header">
+            <h1>FlowStream Private</h1>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+
+        <div class="content">
+            <div class="sections-grid">
+                <!-- Idea Exchange -->
+                <div class="section">
+                    <h2>Idea Exchange</h2>
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Emerging Market Infrastructure Play</div>
+                            <div class="post-author">@Marcus_Chen</div>
+                        </div>
+                        <div class="post-content">
+                            Looking at a tier-2 logistics company in Southeast Asia. Strong fundamentals, government contracts secured through 2028. EBITDA margins improving QoQ. Anyone have exposure to this region?
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Emerging Markets</span>
+                            <span class="tag">Infrastructure</span>
+                            <span class="comment-count">23 comments</span>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Thoughts on Biotech Consolidation?</div>
+                            <div class="post-author">@Sarah_K</div>
+                        </div>
+                        <div class="post-content">
+                            Seeing increased M&A activity in mid-cap biotech. Three potential targets with phase 3 trials completing Q2. Risk-reward looking attractive at current multiples.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Biotech</span>
+                            <span class="tag">M&A</span>
+                            <span class="comment-count">17 comments</span>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Energy Transition Opportunity</div>
+                            <div class="post-author">@James_Rodriguez</div>
+                        </div>
+                        <div class="post-content">
+                            European renewable developer with 2GW pipeline. Trading at 0.6x book despite secured offtake agreements. Management executing well on deployment strategy.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Energy</span>
+                            <span class="tag">ESG</span>
+                            <span class="comment-count">31 comments</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Funds -->
+                <div class="section">
+                    <h2>Funds</h2>
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Arcadia Growth Partners III</div>
+                            <div class="post-author">@Investment_Committee</div>
+                        </div>
+                        <div class="post-content">
+                            First close completed at $850M. Focus on lower mid-market software and tech-enabled services. Target IRR 25%+. Limited capacity remaining for qualified investors.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Private Equity</span>
+                            <span class="tag">Technology</span>
+                            <span class="comment-count">12 comments</span>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Meridian Real Assets Fund</div>
+                            <div class="post-author">@RealEstate_Desk</div>
+                        </div>
+                        <div class="post-content">
+                            Opportunistic real estate fund targeting distressed commercial properties in tier-1 cities. $500M target, currently at $340M committed. Q1 deployment scheduled.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Real Estate</span>
+                            <span class="tag">Opportunistic</span>
+                            <span class="comment-count">8 comments</span>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Catalyst Credit Opportunities</div>
+                            <div class="post-author">@Fixed_Income</div>
+                        </div>
+                        <div class="post-content">
+                            Distressed credit strategy with 15-year track record. Current portfolio yielding 12-14% with strong downside protection. Rolling close structure available.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Credit</span>
+                            <span class="tag">Distressed</span>
+                            <span class="comment-count">19 comments</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Webinars -->
+                <div class="section">
+                    <h2>Webinars</h2>
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Navigating Rate Volatility in 2026</div>
+                            <div class="post-author">Dr. Elizabeth Warren, Chief Economist</div>
+                        </div>
+                        <div class="post-content">
+                            Join us for an in-depth discussion on Fed policy trajectory, inflation expectations, and positioning strategies for the current cycle. February 12, 2:00 PM EST.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Macro</span>
+                            <span class="tag">Fixed Income</span>
+                            <span class="comment-count">47 registered</span>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">AI Infrastructure Investment Thesis</div>
+                            <div class="post-author">Panel Discussion</div>
+                        </div>
+                        <div class="post-content">
+                            Leading technology investors discuss opportunities in AI compute, data centers, and enabling infrastructure. February 19, 11:00 AM EST.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Technology</span>
+                            <span class="tag">Infrastructure</span>
+                            <span class="comment-count">89 registered</span>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Private Credit Market Update</div>
+                            <div class="post-author">Hamilton Credit Advisors</div>
+                        </div>
+                        <div class="post-content">
+                            Quarterly review of private credit markets, covenant trends, and emerging opportunities in direct lending. February 26, 3:00 PM EST.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Credit</span>
+                            <span class="tag">Market Update</span>
+                            <span class="comment-count">34 registered</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research -->
+                <div class="section">
+                    <h2>Research</h2>
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">2026 Global Macro Outlook</div>
+                            <div class="post-author">FlowStream Research</div>
+                        </div>
+                        <div class="post-content">
+                            Comprehensive analysis of macro trends, central bank policy divergence, and cross-asset implications. 87-page report covering equities, fixed income, currencies, and commodities.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Macro</span>
+                            <span class="tag">Multi-Asset</span>
+                            <span class="comment-count">Download PDF</span>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">Healthcare Services Deep Dive</div>
+                            <div class="post-author">Sector Analysis Team</div>
+                        </div>
+                        <div class="post-content">
+                            Detailed sector analysis covering reimbursement trends, regulatory landscape, and attractive subsectors. Includes comp analysis of 25 public and private companies.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">Healthcare</span>
+                            <span class="tag">Sector Report</span>
+                            <span class="comment-count">Download PDF</span>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-title">ESG Integration Framework</div>
+                            <div class="post-author">Sustainability Working Group</div>
+                        </div>
+                        <div class="post-content">
+                            Practical guide to ESG due diligence and integration across asset classes. Templates, checklists, and case studies from recent transactions.
+                        </div>
+                        <div class="post-meta">
+                            <span class="tag">ESG</span>
+                            <span class="tag">Framework</span>
+                            <span class="comment-count">Download PDF</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Login functionality
+        const loginForm = document.getElementById('loginForm');
+        const loginPage = document.getElementById('loginPage');
+        const dashboard = document.getElementById('dashboard');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'FSGuest' && password === 'Anon') {
+                loginPage.style.display = 'none';
+                dashboard.classList.add('active');
+                errorMessage.style.display = 'none';
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        });
+
+        logoutBtn.addEventListener('click', function() {
+            dashboard.classList.remove('active');
+            loginPage.style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            errorMessage.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
